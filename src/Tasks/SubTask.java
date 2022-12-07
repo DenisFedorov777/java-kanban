@@ -1,20 +1,24 @@
 package Tasks;
 
+import java.util.Objects;
+
 public class SubTask extends Task {
-
     private int epicId;
-
-    public int getEpicId() {
-        return epicId;
-    }
 
     public SubTask(String name, String description, int epicId) {//для создания задачи
         super(name, description);
         this.epicId = epicId;
     }
 
-    public SubTask(int id, String name, String description, String status, int epicId) { //для обновления
+    public SubTask(int id, String name, String description, String status) {  //для обновления
         super(id, name, description, status);
+    }
+
+    public Integer getEpicId() {
+        return epicId;
+    }
+
+    public void setEpicId(int epicId) {
         this.epicId = epicId;
     }
 
@@ -24,7 +28,18 @@ public class SubTask extends Task {
                 "epicId=" + epicId +
                 "} " + super.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SubTask subTask = (SubTask) o;
+        return epicId == subTask.epicId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicId);
+    }
 }
-
-
-
