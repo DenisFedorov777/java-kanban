@@ -1,5 +1,7 @@
 package Tasks;
 
+import Status.StatusEnum;
+
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -10,7 +12,7 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public SubTask(int id, String name, String description, String status) {  //для обновления
+    public SubTask(int id, String name, String description, StatusEnum status) {  //для обновления
         super(id, name, description, status);
     }
 

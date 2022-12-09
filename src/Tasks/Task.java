@@ -1,31 +1,35 @@
 package Tasks;
 
+import Status.StatusEnum;
+
 import java.util.Objects;
+
+import static Status.StatusEnum.NEW;
 
 public class Task {
     private int id;
     private String name;
     private String description;
-    private String status;
+    private StatusEnum status;
 
     public Task(String name, String description) {//для создания задач
         this.name = name;
         this.description = description;
-        this.status = "NEW";
+        this.status = NEW;
     }
 
-    public Task(int id, String name, String description, String status) {//для обновления задач
+    public Task(int id, String name, String description, StatusEnum status) {//для обновления задач
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -43,7 +47,7 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return id == task.id && name.equals(task.name) && description.equals(task.description)
-                && status.equals(task.status);
+                && status == task.status;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class Task {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
+                ", status='" + getStatus() + '\'' +
                 '}';
     }
 
