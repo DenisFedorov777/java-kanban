@@ -2,7 +2,6 @@ package Tasks;
 
 import Status.Status;
 
-
 import java.util.Objects;
 
 import static Status.Status.NEW;

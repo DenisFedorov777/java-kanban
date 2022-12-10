@@ -97,9 +97,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearSubtasks() {
-        for(Epic epic : epics.values()) {              // идем по мапе эпиков
+        for (Epic epic : epics.values()) {              // идем по мапе эпиков
             List<Integer> subtasks = epic.getSubtaskList(); // достаем список субтасков 1 эпика
-             subtasks.clear();                            // удаляем список субтасков 1 эпика
+            subtasks.clear();                            // удаляем список субтасков 1 эпика
         }
         subTasks.clear();                                 // очищаем мапу субтасков
     }
