@@ -30,7 +30,7 @@ public interface TaskManager {
 
     void clearTask(); // очистили список Таск
 
-    void clearSubtask();
+    void clearSubtasks();
 
     void clearEpics();
 

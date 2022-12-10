@@ -5,7 +5,9 @@ import Tasks.SubTask;
 import Tasks.Task;
 
 import static Status.Status.*;
+
 // Здравствуйте! Постарался исправить все замечания, спасибо за подсказки)
+//Исправил методы удаления сабтасков и эпиков. Спасибо что сказали что там не все так просто
 public class Main {
     public static void main(String[] args) {
         // Тестирование Тасков
@@ -52,5 +54,10 @@ public class Main {
 
         System.out.println(man.getSubTaskList());
         System.out.println(man.getEpicList());
+        man.clearSubtasks();
+        man.clearEpics();
+        System.out.println("Субтаски и эпики");
+        System.out.println(man.getEpicList());
+        System.out.println(man.getSubTaskList());
     }
 }

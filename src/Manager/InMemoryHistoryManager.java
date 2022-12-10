@@ -2,7 +2,6 @@ package Manager;
 
 import Tasks.Task;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public static final Integer HISTORY_MAX_SIZE = 10;
 
-    private LinkedList<Task> historyList = new LinkedList<>(); //??если написать <T extends Task>
+    private LinkedList<Task> historyList = new LinkedList<>();
 
     @Override
     public void add(Task task) {
