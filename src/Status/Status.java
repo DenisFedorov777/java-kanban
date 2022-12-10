@@ -1,6 +1,6 @@
 package Status;
 
-public enum StatusEnum {
+public enum Status {
     NEW,
     IN_PROGRESS,
     DONE

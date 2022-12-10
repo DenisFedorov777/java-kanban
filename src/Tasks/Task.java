@@ -1,16 +1,17 @@
 package Tasks;
 
-import Status.StatusEnum;
+import Status.Status;
+
 
 import java.util.Objects;
 
-import static Status.StatusEnum.NEW;
+import static Status.Status.NEW;
 
 public class Task {
     private int id;
     private String name;
     private String description;
-    private StatusEnum status;
+    private Status status;
 
     public Task(String name, String description) {//для создания задач
         this.name = name;
@@ -18,18 +19,18 @@ public class Task {
         this.status = NEW;
     }
 
-    public Task(int id, String name, String description, StatusEnum status) {//для обновления задач
+    public Task(int id, String name, String description, Status status) {//для обновления задач
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public StatusEnum getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

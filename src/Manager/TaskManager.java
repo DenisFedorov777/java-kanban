@@ -12,14 +12,11 @@ public interface TaskManager {
 
     List<Task> getTaskList(); // печать списка задач
 
-
     List<SubTask> getSubTaskList(); // печать списка подзадач
-
 
     List<Epic> getEpicList(); // печать списка эпиков
 
     void createTask(Task task); //создали Таск
-
 
     void createEpic(Epic epic); //создали эпик
 
@@ -27,13 +24,15 @@ public interface TaskManager {
 
     void removeTask(int id); //удалили по id
 
-
     void removeEpic(int id); //удалить эпик
-
 
     void removeSubTask(int id); //удалить сабтаск
 
     void clearTask(); // очистили список Таск
+
+    void clearSubtask();
+
+    void clearEpics();
 
     Task getTask(int id); // получение по идентификатору
 
@@ -43,12 +42,9 @@ public interface TaskManager {
 
     void updateTask(Task task); //обновление Task
 
-
     void updateSubTask(SubTask subTask);
 
     void updateEpic(Epic epic);
 
     ArrayList<Task> getListSub(int id); //получение списка подзадач одного эпика
-
-    void setStatus(int id);
 }

@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static Status.StatusEnum.*;
+import static Status.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id;
     private Map<Integer, Task> tasks = new HashMap<>();
     private Map<Integer, SubTask> subTasks = new HashMap<>();
     private Map<Integer, Epic> epics = new HashMap<>();
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getTaskList() { // печать списка задач
@@ -31,6 +31,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Epic> getEpicList() { // печать списка эпиков
         return new ArrayList<>(epics.values());
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     @Override
@@ -90,8 +95,15 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.clear();
     }
 
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
+    @Override
+    public void clearSubtask() {
+        subTasks.clear();
+    }
+
+    @Override
+    public void clearEpics() {
+        subTasks.clear();
+        epics.clear();
     }
 
     @Override
@@ -154,8 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
         return listSubtask;
     }
 
-    @Override
-    public void setStatus(int id) {
+    private void setStatus(int id) {
         int doneCount = 0;
         int newCount = 0;
         for (Integer sId : epics.get(id).getSubtaskList()) {
