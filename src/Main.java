@@ -1,13 +1,11 @@
-import Manager.Managers;
-import Manager.TaskManager;
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
+import manager.Managers;
+import manager.TaskManager;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 
-import static Status.Status.*;
+import static status.Status.*;
 
-// Здравствуйте! Постарался исправить все замечания, спасибо за подсказки)
-//Исправил методы удаления сабтасков и эпиков. Спасибо что сказали что там не все так просто
 public class Main {
     public static void main(String[] args) {
         // Тестирование Тасков

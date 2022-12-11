@@ -1,10 +1,10 @@
-package Tasks;
+package tasks;
 
-import Status.Status;
+import status.Status;
 
 import java.util.Objects;
 
-import static Status.Status.NEW;
+import static status.Status.NEW;
 
 public class Task {
     private int id;

@@ -1,6 +1,6 @@
-package Manager;
+package manager;
 
-import Tasks.Task;
+import tasks.Task;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,11 +13,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (historyList.size() < HISTORY_MAX_SIZE) {
-            historyList.addLast(task);
-        } else {
+        historyList.addLast(task);
+        if (historyList.size() > HISTORY_MAX_SIZE) {
             historyList.removeFirst();
-            historyList.addLast(task);
         }
     }
 

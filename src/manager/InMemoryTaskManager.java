@@ -1,15 +1,15 @@
-package Manager;
+package manager;
 
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static Status.Status.*;
+import static status.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id;
@@ -98,20 +98,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void clearSubtasks() {
         for (Epic epic : epics.values()) {              // идем по мапе эпиков
-            List<Integer> subtasks = epic.getSubtaskList(); // достаем список субтасков 1 эпика
+            ArrayList<Integer> subtasks = epic.getSubtaskList(); // достаем список субтасков 1 эпика
             subtasks.clear();                            // удаляем список субтасков 1 эпика
+            epic.setSubtaskList(subtasks);
         }
         subTasks.clear();                                 // очищаем мапу субтасков
     }
 
     @Override
     public void clearEpics() { //удалить все эпики
-        for (Epic epic : epics.values()) {
-            ArrayList<Integer> subtasksIds = epic.getSubtaskList();
-            for (Integer subtaskId : subtasksIds) {
-                this.subTasks.remove(subtaskId);
-            }
-        }
+        subTasks.clear();
         epics.clear();
     }
 
