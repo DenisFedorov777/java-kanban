@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static status.Status.*;
+import static service.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id;
@@ -67,14 +67,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTask(int id) { //удалили по id
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void removeEpic(int id) { //удалить эпик
         for (Integer subId : epics.get(id).getSubtaskList()) {
             subTasks.remove(subId);
+            historyManager.remove(subId);
         }
         epics.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -85,6 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(epicId).getSubtaskList().remove((Integer) id);
             subTasks.remove(id);
             setStatus(epicId);
+            historyManager.remove(id);
         } else {
             System.out.println("Подзадачи с таким id не найден");
         }

@@ -4,58 +4,36 @@ import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 
-import static status.Status.*;
+import static service.Status.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Тестирование Тасков
         TaskManager man = Managers.getDefault();
 
-        man.createTask(new Task("Задача 1", "Описание 1"));
-        man.createTask(new Task("Задача 2", "описание задачи 2"));
-        System.out.println(man.getTaskList());
-        man.getTask(1);
-        man.getTask(2);
-        man.clearTask();
-        System.out.println(man.getTaskList());
-        System.out.println("История");
+        man.createEpic(new Epic("Первый эпик", "Описание первого эпика"));
+        man.createSubTask(new SubTask("первый сабтаск", "Описание первого сабтаска", 1));
+        man.createSubTask(new SubTask("Второй сабтаск", "Описание второго сабтаска", 1));
+        man.createSubTask(new SubTask("Третий сабтаск", "Описание третьего сабтаска", 1));
+        System.out.println(man.getListSub(1));
+        System.out.println(man.getEpicList());
+        System.out.println(man.getSubTaskList());
+        man.getEpic(1);
+        man.getSubtask(2);
+        man.getSubtask(4);
+        man.createEpic(new Epic("Пустой эпик", "Описание пустого эпика"));
+        System.out.println(man.getEpic(5));
+        System.out.println(man.getEpic(1));
+        System.out.println("--------------------------------");
         System.out.println(man.getHistory());
-        man.removeTask(1);
-        man.updateTask(new Task(2, "Задача 2", "Описание 2", DONE));
-        man.clearTask();
-        System.out.println(man.getTaskList());
-        System.out.println();
-
-        man.getTask(1);
-        man.getEpicList();
-        man.getSubTaskList();
-
-        man.createEpic(new Epic("эпик1", " описание эпика 1"));
-        man.createSubTask(new SubTask("подзадача 1", "описание подзадачи 1 ", 3));
-        man.getListSub(3);
-        System.out.println();
-
-        man.createEpic(new Epic("Сварить суп", "Варить долго"));
-        man.createSubTask(new SubTask("Почистить картошку", "Каротшку чистить кольцами ", 5));
-        man.createSubTask(new SubTask("Почистить лук", "Лук тоже нужен", 5));
+        System.out.println("--------------------------------");
+        man.updateSubTask(new SubTask(3,"Второй сабтаск", "Описание второго сабтаска", IN_PROGRESS));
         System.out.println(man.getSubTaskList());
-        System.out.println(man.getEpicList());
-        System.out.println();
-
-        man.updateSubTask(new SubTask(6, "Мясо", "Мясо заменит лук", DONE));
-        man.updateEpic(new Epic(3, "Сварить компот", "Для этого достать ягоды"));
+        man.removeSubTask(4);
         System.out.println(man.getSubTaskList());
+        man.removeEpic(5);
+        System.out.println("--------------------------------");
+        System.out.println(man.getHistory());
+        System.out.println("--------------------------------");
         System.out.println(man.getEpicList());
-        System.out.println();
-        man.removeSubTask(6);
-        man.removeEpic(3);
-
-        System.out.println(man.getSubTaskList());
-        System.out.println(man.getEpicList());
-        man.clearSubtasks();
-        man.clearEpics();
-        System.out.println("Субтаски и эпики");
-        System.out.println(man.getEpicList());
-        System.out.println(man.getSubTaskList());
     }
 }
