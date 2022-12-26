@@ -9,12 +9,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final CustomLinkedList<Task> list = new CustomLinkedList();
     private final HashMap<Integer, Node> containerLink = new HashMap<>();// дает ссылки на ноды для удаления
 
-    private final List<Task> tasksList = new ArrayList<>();
-
     @Override
     public void add(Task task) {
         Node<Task> node = new Node<>(null, task, null);
-        if(containerLink.containsKey(task.getId())) {
+        if (containerLink.containsKey(task.getId())) {
             list.removeNode(containerLink.get(task.getId()));
         }
         list.linkLast(node);
@@ -48,12 +46,13 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         List<Task> getTasks() {
+            List<Task> tempTasks = new ArrayList<>();
             Node node = head;
             while (node != null) {
-                tasksList.add((Task) node.task);
+                tempTasks.add((Task) node.task);
                 node = node.next;
             }
-            return tasksList;
+            return tempTasks;
         }
 
         void removeNode(Node node) {
@@ -63,10 +62,10 @@ public class InMemoryHistoryManager implements HistoryManager {
                 head = null;
                 tail = null;
                 node = null;
-            } else if(prevNode == null && nextNode != null) {
+            } else if (prevNode == null && nextNode != null) {
                 head = nextNode;
                 nextNode.prev = null;
-            } else if(prevNode != null && nextNode == null) {
+            } else if (prevNode != null && nextNode == null) {
                 tail = prevNode;
                 prevNode.next = null;
             } else if (prevNode != null && nextNode != null) {
