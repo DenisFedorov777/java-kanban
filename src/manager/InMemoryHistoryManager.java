@@ -7,7 +7,7 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final CustomLinkedList<Task> list = new CustomLinkedList();
-    private final HashMap<Integer, Node> containerLink = new HashMap<>();// дает ссылки на ноды для удаления
+    private final HashMap<Integer, Node<Task>> containerLink = new HashMap<>();// дает ссылки на ноды для удаления
 
     @Override
     public void add(Task task) {
@@ -21,8 +21,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        list.removeNode(containerLink.get(id));
-        containerLink.remove(id);
+        if(containerLink.get(id) != null) {
+            list.removeNode(containerLink.get(id));
+            containerLink.remove(id);
+        } else {
+            System.out.println("Такой ноды не существует");
+        }
     }
 
     @Override
@@ -49,7 +53,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             List<Task> tempTasks = new ArrayList<>();
             Node node = head;
             while (node != null) {
-                tempTasks.add((Task) node.task);
+                tempTasks.add((Task) node.data);
                 node = node.next;
             }
             return tempTasks;
@@ -61,7 +65,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (prevNode == null && nextNode == null) {
                 head = null;
                 tail = null;
-                node = null;
             } else if (prevNode == null && nextNode != null) {
                 head = nextNode;
                 nextNode.prev = null;

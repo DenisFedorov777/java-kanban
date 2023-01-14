@@ -13,10 +13,10 @@ import static service.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id;
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, SubTask> subTasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    final private Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getTaskList() { // печать списка задач
@@ -117,7 +117,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTask(int id) { // получение по идентификатору
-        historyManager.add(tasks.get(id)); //записываем в список истории
+        if (tasks.get(id) != null) {
+            historyManager.add(tasks.get(id)); //записываем в список истории
+        } else {
+            System.out.println("Такой зачачи не существует");
+        }
         return tasks.get(id);
     }
 

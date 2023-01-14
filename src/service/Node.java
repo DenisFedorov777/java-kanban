@@ -1,12 +1,12 @@
 package service;
 
-public  class Node<Task> {
-    public Task task;
-    public Node<Task> next;
-    public Node<Task> prev;
+public  class Node<T> {
+    public T data;
+    public Node<T> next;
+    public Node<T> prev;
 
-    public Node(Node<Task> prev, Task task, Node<Task> next) {
-        this.task = task;
+    public Node(Node<T> prev, T task, Node<T> next) {
+        this.data = task;
         this.next = next;
         this.prev = prev;
     }
