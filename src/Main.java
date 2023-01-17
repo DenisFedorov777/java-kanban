@@ -3,9 +3,7 @@ import manager.TaskManager;
 import tasks.Epic;
 import tasks.SubTask;
 
-/*Здравствуйте! С праздниками! Спасибо за Ваши комментарии в улучшении моего кода.
-К сожалению Не все замечания исправил: не совсем понял как убрать одну из коллекций, и возможно по этой причине
- не смог отказаться от Каста в классе InMemoryHistoryManager - tempTasks.add((Task) node.task);*/
+ // Здравствуйте! Постарался все учесть и исправить.
 public class Main {
     public static void main(String[] args) {
         TaskManager man = Managers.getDefault();
