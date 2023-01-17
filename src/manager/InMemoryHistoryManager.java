@@ -6,24 +6,24 @@ import tasks.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final CustomLinkedList<Task> list = new CustomLinkedList();
-    private final HashMap<Integer, Node<Task>> containerLink = new HashMap<>();// дает ссылки на ноды для удаления
+    private CustomLinkedList<Task> list = new CustomLinkedList();
 
     @Override
     public void add(Task task) {
         Node<Task> node = new Node<>(null, task, null);
-        if (containerLink.containsKey(task.getId())) {
-            list.removeNode(containerLink.get(task.getId()));
+        int taskId = task.getId();
+        if (list.containerLink.containsKey(taskId)) {
+            list.removeNode(list.containerLink.get(taskId));
         }
         list.linkLast(node);
-        containerLink.put(task.getId(), node);
+        list.containerLink.put(taskId, list.getTail());
     }
 
     @Override
     public void remove(int id) {
-        if(containerLink.get(id) != null) {
-            list.removeNode(containerLink.get(id));
-            containerLink.remove(id);
+        if(list.containerLink.get(id) != null) {
+            list.removeNode(list.containerLink.get(id));
+            list.containerLink.remove(id);
         } else {
             System.out.println("Такой ноды не существует");
         }
@@ -35,8 +35,13 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public class CustomLinkedList<T> {
+        HashMap<Integer, Node<Task>> containerLink = new HashMap<>();
         private Node<T> head;
         private Node<T> tail;
+
+        public Node<T> getTail() {
+            return tail;
+        }
 
         void linkLast(Node node) {
             final Node<T> oldTail = tail;
@@ -49,11 +54,11 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
         }
 
-        List<Task> getTasks() {
-            List<Task> tempTasks = new ArrayList<>();
-            Node node = head;
+        List<T> getTasks() {
+            List<T> tempTasks = new ArrayList<>();
+            Node<T> node = head;
             while (node != null) {
-                tempTasks.add((Task) node.data);
+                tempTasks.add( node.data);
                 node = node.next;
             }
             return tempTasks;
