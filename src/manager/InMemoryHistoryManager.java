@@ -6,7 +6,7 @@ import tasks.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private CustomLinkedList<Task> list = new CustomLinkedList();
+    private final CustomLinkedList<Task> list = new CustomLinkedList<>();
 
     @Override
     public void add(Task task) {
@@ -43,7 +43,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             return tail;
         }
 
-        void linkLast(Node node) {
+        void linkLast(Node<T> node) {
             final Node<T> oldTail = tail;
             node.prev = oldTail;
             tail = node;
@@ -64,9 +64,9 @@ public class InMemoryHistoryManager implements HistoryManager {
             return tempTasks;
         }
 
-        void removeNode(Node node) {
-            Node prevNode = node.prev;
-            Node nextNode = node.next;
+        void removeNode(Node<T> node) {
+            Node<T> prevNode = node.prev;
+            Node<T> nextNode = node.next;
             if (prevNode == null && nextNode == null) {
                 head = null;
                 tail = null;
@@ -76,7 +76,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             } else if (prevNode != null && nextNode == null) {
                 tail = prevNode;
                 prevNode.next = null;
-            } else if (prevNode != null && nextNode != null) {
+            } else {
                 prevNode.next = nextNode;
                 nextNode.prev = prevNode;
             }
