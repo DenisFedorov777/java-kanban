@@ -16,6 +16,10 @@ public class SubTask extends Task {
         super(id, name, description, status);
     }
 
+    public SubTask(int id, String name, String description, Status status, int epicId) {  //для обновления
+        super(id, name, description, status);
+    }
+
     public Integer getEpicId() {
         return epicId;
     }

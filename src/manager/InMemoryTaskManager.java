@@ -12,11 +12,11 @@ import java.util.Map;
 import static service.Status.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int id;
-    final private Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, SubTask> subTasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected int id;
+    final protected Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getTaskList() { // печать списка задач
@@ -207,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
         return listSubtask;
     }
 
-    private void setStatus(int id) {
+    protected void setStatus(int id) {
         int doneCount = 0;
         int newCount = 0;
         for (Integer sId : epics.get(id).getSubtaskList()) {

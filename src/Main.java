@@ -4,10 +4,6 @@ import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 
-/*
-Здравствуйте! Спасибо за замечания, и за комментарии - они очень помогают. Постарался все учесть и исправить.
-*/
-
 public class Main {
     public static void main(String[] args) {
         TaskManager man = Managers.getDefault();

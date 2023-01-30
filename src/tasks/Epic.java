@@ -1,5 +1,7 @@
 package tasks;
 
+import service.Status;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -12,6 +14,11 @@ public class Epic extends Task {
     }
 
     public Epic(int id, String name, String description) { //для обновления
+        super(name, description);
+        this.setId(id);
+    }
+
+    public Epic(int id, String name, String description, Status status) { //для обновления
         super(name, description);
         this.setId(id);
     }
