@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Integer> subtaskList;
+    private ArrayList<Integer> subtaskList = new ArrayList<>();
 
     public Epic(String name, String description) {// для создания
         super(name, description);
-        this.subtaskList = new ArrayList<>();
+
     }
 
     public Epic(int id, String name, String description) { //для обновления
@@ -21,6 +21,7 @@ public class Epic extends Task {
     public Epic(int id, String name, String description, Status status) { //для обновления
         super(name, description);
         this.setId(id);
+        this.setStatus(status);
     }
 
     public void setSubtaskList(ArrayList<Integer> subtaskList) {

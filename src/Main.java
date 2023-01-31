@@ -19,7 +19,7 @@ public class Main {
         man.getSubtask(2);
         man.getSubtask(4);
         man.createEpic(new Epic("Пустой эпик", "Описание пустого эпика"));
-        System.out.println(man.getEpic(1));
+        /*System.out.println(man.getEpic(1));
         System.out.println("-------------------------**-------");
         System.out.println("История");
         System.out.println(man.getHistory());
@@ -31,6 +31,6 @@ public class Main {
         System.out.println("--------------------------------");
         man.clearSubtasks();
         man.clearEpics();
-        System.out.println(man.getHistory());
+        System.out.println(man.getHistory());*/
     }
 }

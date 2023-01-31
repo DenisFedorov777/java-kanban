@@ -4,7 +4,8 @@ import java.io.File;
 
 public class Managers {
 
-    /*public static TaskManager getDefault() {
+    /* Класс оперативной памяти
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }*/
 

@@ -18,6 +18,7 @@ public class SubTask extends Task {
 
     public SubTask(int id, String name, String description, Status status, int epicId) {  //для обновления
         super(id, name, description, status);
+        this.epicId = epicId;
     }
 
     public Integer getEpicId() {
