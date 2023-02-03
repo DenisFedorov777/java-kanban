@@ -29,14 +29,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 line = br.readLine();
                 if (!line.isEmpty()) {
                     Task task = formatter.fromString(line);
-                    formatter.writeToHistory(task);
+                    dataTasks.writeToHistory(task);
                 } else {
                     break;
                 }
             }
             String oneLine = br.readLine();
-            for (int id : Formatter.historyFromString(oneLine)) {
-                formatter.addToHistory(id);
+            for (int id : formatter.historyFromString(oneLine)) {
+                dataTasks.addToHistory(id);
             }
             dataTasks.id = maxId;
         } catch (IOException exp) {
@@ -59,9 +59,36 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 writer.write("");
             }
             writer.write(NEW_LINE);
-            writer.write(Formatter.historyToString(historyManager));
+            writer.write(formatter.historyToString(historyManager));
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при сохранении файла");
+        }
+    }
+
+    public void writeToHistory(Task task) {
+        final int id = task.getId();
+        switch (task.getType()) {
+            case EPIC:
+                epics.put(id, (Epic) task);
+                break;
+            case SUBTASK:
+                SubTask subTask = (SubTask) task;
+                subTasks.put(id, subTask);
+                epics.get(subTask.getEpicId()).getSubtaskList().add(id);
+                break;
+            default:
+                tasks.put(id, task);
+                break;
+        }
+    }
+
+    public void addToHistory(int id) {
+        if (epics.containsKey(id)) {
+            historyManager.add(epics.get(id));
+        } else if (subTasks.containsKey(id)) {
+            historyManager.add(subTasks.get(id));
+        } else if (tasks.containsKey(id)) {
+            historyManager.add(tasks.get(id));
         }
     }
 

@@ -2,39 +2,10 @@ package manager;
 
 import tasks.*;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Formatter {
-    FileBackedTasksManager manager = new FileBackedTasksManager(new File("DataFile.csv"));
-
-    public void writeToHistory(Task task) {
-        final int id = task.getId();
-        switch (task.getType()) {
-            case EPIC:
-                manager.epics.put(id, (Epic) task);
-                break;
-            case SUBTASK:
-                SubTask subTask = (SubTask) task;
-                manager.subTasks.put(id, subTask);
-                manager.epics.get(subTask.getEpicId()).getSubtaskList().add(id);
-                break;
-            default:
-                manager.tasks.put(id, task);
-                break;
-        }
-    }
-
-    public void addToHistory(int id) {
-        if (manager.epics.containsKey(id)) {
-            manager.historyManager.add(manager.epics.get(id));
-        } else if (manager.subTasks.containsKey(id)) {
-            manager.historyManager.add(manager.subTasks.get(id));
-        } else if (manager.tasks.containsKey(id)) {
-            manager.historyManager.add(manager.tasks.get(id));
-        }
-    }
 
     public String toString(Task task) {
         String idEpic = String.valueOf(task.getEpicId());
@@ -65,7 +36,7 @@ public class Formatter {
         }
     }
 
-    public static String historyToString(HistoryManager manager) { //сохр.историю в csv
+    public String historyToString(HistoryManager manager) { //сохр.историю в csv
         List<Task> history = manager.getHistory();
         StringBuilder sb = new StringBuilder();
         if (history.isEmpty()) {
@@ -77,7 +48,7 @@ public class Formatter {
         return sb.toString();
     }
 
-    public static List<Integer> historyFromString(String value) { //восстановление истории из CSV
+    public List<Integer> historyFromString(String value) { //восстановление истории из CSV
         List<Integer> fromCSV = new ArrayList<>();
         if (value != null) {
             String[] id = value.split(",");
