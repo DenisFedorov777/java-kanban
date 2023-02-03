@@ -1,7 +1,5 @@
 package tasks;
 
-import service.Status;
-
 import java.util.Objects;
 
 public class SubTask extends Task {

@@ -1,8 +1,8 @@
 package manager;
 
 import service.ManagerSaveException;
-import service.Status;
-import service.TypesTask;
+import tasks.Status;
+import tasks.TypesTask;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
@@ -10,7 +10,6 @@ import tasks.Task;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +102,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else if (task instanceof SubTask) {
             return TypesTask.SUBTASK;
         }
-        return TypesTask.SIMPLE_TASK;
+        return TypesTask.TASK;
     }
 
     private String getSubtaskByEpicId(Task task) { //достать id эпика у сабтаска
@@ -121,17 +120,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private Task fromString(String value) { //черновик
         final String[] strings = value.split(";"); // разделитель
         final int id = Integer.parseInt(strings[0]); // id
-        final TypesTask type = TypesTask.valueOf(strings[1].toUpperCase()); //тип задачи
+        final TypesTask type = TypesTask.valueOf(strings[1]); //тип задачи
         final String name = strings[2]; //название
         final String description = strings[3]; //описание
-        final Status status = Status.valueOf(strings[4].toUpperCase()); //статус
+        final Status status = Status.valueOf(strings[4]); //статус
         switch (type) {
-            case SIMPLE_TASK:
+            case TASK:
                 return new Task(id, name, description, status);
             case EPIC:
                 return new Epic(id, name, description, status);
             case SUBTASK:
-                final int epicId = Integer.parseInt(strings[5]);// или Integer.valueOf(split[5])?
+                final int epicId = Integer.parseInt(strings[5]);
                 return new SubTask(id, name, description, status, epicId);
             default:
                 throw new IllegalArgumentException("Неправильный тип задачи");
@@ -164,21 +163,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public SubTask getSubtask(int id) {
-        SubTask subTask = super.getSubtask(id);
         save();
         return subTasks.get(id);
     }
 
     @Override
     public Epic getEpic(int id) {
-        Epic epic = super.getEpic(id);
         save();
         return epics.get(id);
     }
 
     @Override
-    public Task getTask(int id) { // получение по идентификатору
-        Task task = super.getTask(id);
+    public Task getTask(int id) { // получение по id
         save();
         return tasks.get(id);
     }

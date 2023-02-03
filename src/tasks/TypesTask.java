@@ -1,7 +1,7 @@
-package service;
+package tasks;
 
 public enum TypesTask {
-    SIMPLE_TASK,
+    TASK,
     SUBTASK,
     EPIC
 }

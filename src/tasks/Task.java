@@ -1,8 +1,7 @@
 package tasks;
 
-import service.Status;
 import java.util.Objects;
-import static service.Status.NEW;
+import static tasks.Status.NEW;
 
 public class Task {
 
