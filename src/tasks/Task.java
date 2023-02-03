@@ -47,6 +47,14 @@ public class Task {
         return description;
     }
 
+    public TypesTask getType() {
+        return TypesTask.TASK;
+    }
+
+    public Integer getEpicId() {
+            return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

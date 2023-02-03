@@ -140,7 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.get(id) != null) {
             historyManager.add(tasks.get(id)); //записываем в список истории
         } else {
-            System.out.println("Такой зачачи не существует");
+            System.out.println("Такой задачи не существует");
         }
         return tasks.get(id);
     }
