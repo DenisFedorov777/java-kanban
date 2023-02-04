@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Formatter {
 
-    public String toString(Task task) {
+    public static String toString(Task task) {
         String idEpic = String.valueOf(task.getEpicId());
         if (idEpic == "null") {
             idEpic = "";
@@ -16,7 +16,7 @@ public class Formatter {
                 task.getName(), task.getDescription(), task.getStatus(), idEpic);
     }
 
-    public Task fromString(String value) { //черновик
+    public static Task fromString(String value) { //черновик
         final String[] strings = value.split(";"); // разделитель
         final int id = Integer.parseInt(strings[0]); // id
         final TypesTask type = TypesTask.valueOf(strings[1]); //тип задачи
@@ -36,7 +36,7 @@ public class Formatter {
         }
     }
 
-    public String historyToString(HistoryManager manager) { //сохр.историю в csv
+    public static String historyToString(HistoryManager manager) { //сохр.историю в csv
         List<Task> history = manager.getHistory();
         StringBuilder sb = new StringBuilder();
         if (history.isEmpty()) {
@@ -48,7 +48,7 @@ public class Formatter {
         return sb.toString();
     }
 
-    public List<Integer> historyFromString(String value) { //восстановление истории из CSV
+    public static List<Integer> historyFromString(String value) { //восстановление истории из CSV
         List<Integer> fromCSV = new ArrayList<>();
         if (value != null) {
             String[] id = value.split(",");

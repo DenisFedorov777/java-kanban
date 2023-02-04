@@ -35,10 +35,6 @@ public class Epic extends Task {
         return TypesTask.EPIC;
     }
 
-    public Integer getEpicId() {
-        return null;
-    }
-
     @Override
     public String toString() {
         return "Epic{" +

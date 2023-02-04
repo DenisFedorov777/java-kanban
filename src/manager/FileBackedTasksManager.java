@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private static final Formatter formatter = new Formatter();
     private static final String HEAD = "id,type,name,description,status,epicId";
     private static final String NEW_LINE = "\n";
     private final File file;
@@ -28,14 +27,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             while (br.ready()) {
                 line = br.readLine();
                 if (!line.isEmpty()) {
-                    Task task = formatter.fromString(line);
+                    Task task = Formatter.fromString(line);
                     dataTasks.writeToHistory(task);
                 } else {
                     break;
                 }
             }
             String oneLine = br.readLine();
-            for (int id : formatter.historyFromString(oneLine)) {
+            for (int id : Formatter.historyFromString(oneLine)) {
                 dataTasks.addToHistory(id);
             }
             dataTasks.id = maxId;
@@ -49,23 +48,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardOpenOption.TRUNCATE_EXISTING)) {
             writer.write(HEAD + NEW_LINE);
             for (Task task : getTaskList()) {
-                writer.write(formatter.toString(task) + NEW_LINE);
+                writer.write(Formatter.toString(task) + NEW_LINE);
             }
             for (Epic epic : getEpicList()) {
-                writer.write(formatter.toString(epic) + NEW_LINE);
+                writer.write(Formatter.toString(epic) + NEW_LINE);
             }
             for (SubTask subTask : getSubTaskList()) {
-                writer.write(formatter.toString(subTask) + NEW_LINE);
+                writer.write(Formatter.toString(subTask) + NEW_LINE);
                 writer.write("");
             }
             writer.write(NEW_LINE);
-            writer.write(formatter.historyToString(historyManager));
+            writer.write(Formatter.historyToString(historyManager));
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при сохранении файла");
         }
     }
 
-    public void writeToHistory(Task task) {
+    private void writeToHistory(Task task) {
         final int id = task.getId();
         switch (task.getType()) {
             case EPIC:
@@ -82,7 +81,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public void addToHistory(int id) {
+    private void addToHistory(int id) {
         if (epics.containsKey(id)) {
             historyManager.add(epics.get(id));
         } else if (subTasks.containsKey(id)) {
