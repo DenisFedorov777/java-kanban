@@ -1,17 +1,18 @@
-package manager;
+package main.manager;
 
-import service.ManagerSaveException;
-import tasks.Epic;
-import tasks.SubTask;
-import tasks.Task;
+import main.service.ManagerSaveException;
+import main.tasks.Epic;
+import main.tasks.SubTask;
+import main.tasks.Task;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
+
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private static final String HEAD = "id,type,name,description,status,epicId";
+    private static final String HEAD = "id,type,name,description,duration,startTime,status,epicId";
     private static final String NEW_LINE = "\n";
     private final File file;
 
@@ -21,25 +22,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager dataTasks = new FileBackedTasksManager(file);
-        try (BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-            String line = br.readLine();
-            int maxId = 0;
-            while (br.ready()) {
-                line = br.readLine();
-                if (!line.isEmpty()) {
-                    Task task = Formatter.fromString(line);
-                    dataTasks.writeToHistory(task);
-                } else {
-                    break;
+        if (file.length() != 0) {
+            try (BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+                String line = br.readLine();
+                int maxId = 0;
+                if (line != null) {
+                    while (br.ready()) {
+                        line = br.readLine();
+                        if (!line.isEmpty()) {
+                            Task task = Formatter.fromString(line);
+                            dataTasks.writeToMaps(task);
+                        } else {
+                            break;
+                        }
+                    }
+                    String oneLine = br.readLine();
+                    if (oneLine != null) {
+                        for (int id : Formatter.historyFromString(oneLine)) {
+                            dataTasks.addToHistory(id);
+                        }
+                    }
+                    dataTasks.id = maxId;
                 }
+            } catch (IOException exp) {
+                throw new ManagerSaveException("Ошибка при чтении данных из файла.", exp);
             }
-            String oneLine = br.readLine();
-            for (int id : Formatter.historyFromString(oneLine)) {
-                dataTasks.addToHistory(id);
-            }
-            dataTasks.id = maxId;
-        } catch (IOException exp) {
-            throw new ManagerSaveException("Ошибка при чтении данных из файла.", exp);
         }
         return dataTasks;
     }
@@ -60,11 +67,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             writer.write(NEW_LINE);
             writer.write(Formatter.historyToString(historyManager));
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при сохранении файла");
+            throw new ManagerSaveException("Ошибка при сохранении файла", e);
         }
     }
 
-    private void writeToHistory(Task task) {
+    private void writeToMaps(Task task) {
         final int id = task.getId();
         switch (task.getType()) {
             case EPIC:

@@ -1,4 +1,4 @@
-package service;
+package main.service;
 
 public  class Node<T> {
     public T data;

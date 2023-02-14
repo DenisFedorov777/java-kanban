@@ -1,29 +1,32 @@
-package tasks;
+package main.tasks;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private ArrayList<Integer> subtaskList = new ArrayList<>();
 
-    public Epic(String name, String description) {// для создания
-        super(name, description);
-
-    }
-
-    public Epic(int id, String name, String description) { //для обновления
-        super(name, description);
-        this.setId(id);
-    }
-
-    public Epic(int id, String name, String description, Status status) { //для обновления
+    public Epic(int id, String name, String description, long duration, Status status) {
         super(name, description);
         this.setId(id);
         this.setStatus(status);
     }
 
-    public void setSubtaskList(ArrayList<Integer> subtaskList) {
-        this.subtaskList = subtaskList;
+    public Epic(String name, String description) {
+        super(name, description);
+    }
+
+    public Epic(String name, String description, long duration, LocalDateTime startTime, Status status) {
+        super(name, description, status, duration, startTime);
+    }
+
+    public Epic(int id, String name, String description, long duration, LocalDateTime startTime, Status status) {
+        super(id, name, description, duration, startTime, status);
+    }
+
+    public void setSubtaskList(ArrayList<Integer> subtasks) {
+        this.subtaskList = subtasks;
     }
 
     public ArrayList<Integer> getSubtaskList() {
@@ -33,13 +36,6 @@ public class Epic extends Task {
     @Override
     public TypesTask getType() {
         return TypesTask.EPIC;
-    }
-
-    @Override
-    public String toString() {
-        return "Epic{" +
-                "subtaskList=" + subtaskList +
-                "} " + super.toString();
     }
 
     @Override

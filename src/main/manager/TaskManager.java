@@ -1,11 +1,12 @@
-package manager;
+package main.manager;
 
-import tasks.Epic;
-import tasks.SubTask;
-import tasks.Task;
+import main.tasks.Epic;
+import main.tasks.SubTask;
+import main.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     List<Task> getHistory();
@@ -47,4 +48,6 @@ public interface TaskManager {
     void updateEpic(Epic epic);
 
     ArrayList<Task> getListSub(int id); //получение списка подзадач одного эпика
+
+    Set<Task> getListOfPriority();
 }

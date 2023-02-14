@@ -1,9 +1,11 @@
-package manager;
+package main.manager;
 
-import service.Node;
-import tasks.Task;
+import main.service.Node;
+import main.tasks.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final CustomLinkedList<Task> list = new CustomLinkedList<>();
@@ -53,7 +55,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 oldTail.next = node;
             }
         }
-
         List<T> getTasks() {
             List<T> tempTasks = new ArrayList<>();
             Node<T> node = head;
