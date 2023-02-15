@@ -8,8 +8,8 @@ import main.tasks.Task;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String HEAD = "id,type,name,description,duration,startTime,status,epicId";
@@ -52,7 +52,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void save() {
-        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardOpenOption.TRUNCATE_EXISTING)) {
+        try(FileWriter writer = new FileWriter(file, false)) {
             writer.write(HEAD + NEW_LINE);
             for (Task task : getTaskList()) {
                 writer.write(Formatter.toString(task) + NEW_LINE);
@@ -66,7 +66,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             writer.write(NEW_LINE);
             writer.write(Formatter.historyToString(historyManager));
-        } catch (IOException e) {
+            } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при сохранении файла", e);
         }
     }
@@ -76,14 +76,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         switch (task.getType()) {
             case EPIC:
                 epics.put(id, (Epic) task);
+                listOfPriority.add(task);
                 break;
             case SUBTASK:
                 SubTask subTask = (SubTask) task;
                 subTasks.put(id, subTask);
                 epics.get(subTask.getEpicId()).getSubtaskList().add(id);
+                listOfPriority.add(subTask);
                 break;
             default:
                 tasks.put(id, task);
+                listOfPriority.add(task);
                 break;
         }
     }

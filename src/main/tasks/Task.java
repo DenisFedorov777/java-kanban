@@ -14,13 +14,14 @@ public class Task {
 
     private LocalDateTime endTime;
 
+    //конструктор для записи
     public Task(String name, String description, Status status, long duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
-        this.endTime = startTime.plusMinutes(duration);
+        this.endTime = getEndTime();
     }
 
     public Task(String name, String description) {
@@ -35,6 +36,7 @@ public class Task {
         this.duration = duration;
     }
 
+    //конструктор для обновления
     public Task(int id, String name, String description, long duration,
                 LocalDateTime startTime, Status status) {
         this.id = id;
@@ -95,7 +97,12 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return this.startTime.plusMinutes(duration);
+        try {
+            return this.startTime.plusMinutes(duration);
+        } catch (NullPointerException exp) {
+            System.out.println(exp.getMessage());
+        }
+        return startTime;
     }
 
     public void setEndTime(LocalDateTime endTime) {
@@ -118,10 +125,10 @@ public class Task {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status=" + status +
-                ", startTime=" + startTime +
                 ", duration=" + duration +
-                ", endTime=" + endTime +
+                ", startTime=" + startTime +
+                ", status=" + status +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 

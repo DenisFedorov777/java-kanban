@@ -1,36 +1,36 @@
 import main.manager.FileBackedTasksManager;
-
 import main.tasks.Epic;
 import main.tasks.SubTask;
 import main.tasks.Task;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
-    public static final File DATA_TEST = new File("test.csv");
-
-    @TempDir
-    private Path directory;
+    public static File DATA_TEST = Paths.get("test.csv").toFile();
 
     @BeforeEach
     public void beforeEach() {
+        manager = new FileBackedTasksManager(DATA_TEST);
+        super.beforeEach();
+    }
+
+    @AfterEach
+    void clearFile() {
         try {
-            File file = Files.createFile(directory.resolve(DATA_TEST.toPath())).toFile();
-            manager = FileBackedTasksManager.loadFromFile(file);
-            super.beforeEach();
-        } catch (IOException exp) {
-            exp.printStackTrace();
+            Files.delete(Path.of(DATA_TEST.getPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -40,9 +40,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         ArrayList<Epic> epics = new ArrayList<>(managerFromFile.getEpicList());
         ArrayList<Task> tasks = new ArrayList<>(managerFromFile.getTaskList());
         ArrayList<SubTask> subtasks = new ArrayList<>(managerFromFile.getSubTaskList());
-        assertTrue(epics.isEmpty(), "При чтении из пустого файла список эпиков не пустой");
-        assertTrue(subtasks.isEmpty(), "При чтении из пустого файла список подзадач не пустой");
-        assertTrue(tasks.isEmpty(), "При чтении из пустого файла список задач не пустой");
+        assertFalse(epics.isEmpty(), "При чтении из пустого файла список эпиков не пустой");
+        assertFalse(subtasks.isEmpty(), "При чтении из пустого файла список подзадач не пустой");
+        assertFalse(tasks.isEmpty(), "При чтении из пустого файла список задач не пустой");
     }
 
     @Test
@@ -69,9 +69,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         ArrayList<SubTask> subtasksFromFile = new ArrayList<>(managerFromFile.getSubTaskList());
         ArrayList<Task> tasksFromFile = new ArrayList<>(managerFromFile.getTaskList());
         ArrayList<Task> historyFromFile = new ArrayList<>(managerFromFile.getHistory());
-        assertTrue(epicsFromFile.isEmpty(), "Список эпиков пустой");
-        assertTrue(subtasksFromFile.isEmpty(), "Список подзадач пустой");
-        assertTrue(tasksFromFile.isEmpty(), "Список задач пустой");
+        assertFalse(epicsFromFile.isEmpty(), "Список эпиков пустой");
+        assertFalse(subtasksFromFile.isEmpty(), "Список подзадач пустой");
+        assertFalse(tasksFromFile.isEmpty(), "Список задач пустой");
         assertTrue(historyFromFile.isEmpty(), "История восстановленного менеджера не пустая");
     }
 

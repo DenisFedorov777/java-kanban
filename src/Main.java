@@ -64,6 +64,7 @@ public class Main {
         man.createEpic(new Epic("Пустой эпик", "Описание пустого эпика"));
         System.out.println(man.getEpic(1));
         FileBackedTasksManager manager = FileBackedTasksManager.loadFromFile(file);
+        System.out.println("---------null--------");
         manager.getTaskList();
         manager.getEpicList();
         manager.getSubTaskList();

@@ -13,28 +13,32 @@ public class Formatter {
         if (idEpic.equals("null")) {
             idEpic = "";
         }
-        String startTime = "null";
-        String endTime = "null";
         return String.format("%d;%S;%s;%s;%S;%s;%s;%s", task.getId(), task.getType(),
-                task.getName(), task.getDescription(), task.getDuration(), task.getStartTime(), task.getStatus(), idEpic);
+                task.getName(), task.getDescription(),task.getDuration(),task.getStartTime(), task.getStatus(), idEpic);
     }
 
-    public static Task fromString(String value) {
-        final String[] strings = value.split(";");
-        final int id = Integer.parseInt(strings[0]);
-        final TypesTask type = TypesTask.valueOf(strings[1]);
-        final String name = strings[2];
-        final String description = strings[3];
-        long duration = Long.parseLong(strings[4]);
+    public static Task fromString(String value) { //черновик
+        final String[] strings = value.split(";"); // разделитель
+        final int id = Integer.parseInt(strings[0]); // id
+        final TypesTask type = TypesTask.valueOf(strings[1]); //тип задачи
+        final String name = strings[2]; //название
+        final String description = strings[3]; //описание
+        long duration = Long.parseLong(strings[4]); //статус
+        LocalDateTime startTime;
+        if(strings[5].equals("null")) {
+            startTime = null;
+        } else {
+            startTime = LocalDateTime.parse(strings[5]);
+        }
         final Status status = Status.valueOf(strings[6]);
         switch (type) {
             case TASK:
-                return new Task(id, name, description, duration, LocalDateTime.parse(strings[5]), status);
+                return new Task(id, name, description, duration, startTime, status);
             case EPIC:
-                return new Epic(id, name, description, duration, status);
+                return new Epic(id, name, description, duration, startTime, status);
             case SUBTASK:
                 final int epicId = Integer.parseInt(strings[7]);
-                return new SubTask(id, name, description, status, LocalDateTime.parse(strings[5]), duration, epicId);
+                return new SubTask(id, name, description, status, startTime, duration, epicId);
             default:
                 throw new IllegalArgumentException("Неправильный тип задачи");
         }

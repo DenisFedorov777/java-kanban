@@ -48,7 +48,20 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveTask() {
+    public void shouldAddDouble1to1TasksToHistory() {// проверка дубля
+        Task task1 = createTask();
+        int taskId1 = createId();
+        task1.setId(taskId1);
+        Task task2 = createTask();
+        task2.setId(taskId1);
+        task1 = task2;
+        manager.add(task1);
+        manager.add(task2);
+        assertEquals(1, manager.getHistory().size());
+    }
+
+    @Test
+    public void shouldRemoveTask() { // проверка дубля задач
         Task task1 = createTask();
         int taskId1 = createId();
         task1.setId(taskId1);

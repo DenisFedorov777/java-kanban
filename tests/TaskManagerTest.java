@@ -3,7 +3,6 @@ import main.tasks.Epic;
 import main.tasks.Status;
 import main.tasks.SubTask;
 import main.tasks.Task;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static main.tasks.Status.DONE;
 import static main.tasks.Status.IN_PROGRESS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -272,6 +272,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.updateSubTask(subtask1);
         assertEquals(IN_PROGRESS, epicWithSubtasks.getStatus(),
                 "Статус эпика  не IN_PROGRESS");
+    }
+
+    @Test
+    void shouldReturnUpdatedEpicWithChangedStatusAfterUpdateAllSubtasks() { //обновление статуса эпика на DONE
+        subtask1.setStatus(DONE);
+        subtask2.setStatus(DONE);
+        manager.updateSubTask(subtask1);
+        manager.updateSubTask(subtask2);
+        assertEquals(DONE, epicWithSubtasks.getStatus(),
+                "Статус эпика  не DONE");
     }
 
     @Test
