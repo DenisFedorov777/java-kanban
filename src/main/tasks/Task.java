@@ -45,7 +45,6 @@ public class Task {
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
-        this.endTime = getEndTime();
     }
 
     public Status getStatus() {
@@ -102,7 +101,7 @@ public class Task {
         } catch (NullPointerException exp) {
             System.out.println(exp.getMessage());
         }
-        return startTime;
+        return null;
     }
 
     public void setEndTime(LocalDateTime endTime) {
@@ -114,8 +113,8 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && name.equals(task.name) && description.equals(task.description)
-                && status == task.status && duration == task.duration
+        return id == task.id && duration == task.duration && name.equals(task.name)
+                && description.equals(task.description) && status == task.status
                 && Objects.equals(startTime, task.startTime) && Objects.equals(endTime, task.endTime);
     }
 

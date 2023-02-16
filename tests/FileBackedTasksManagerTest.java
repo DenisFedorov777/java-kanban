@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,5 +91,20 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
                 "При чтении из непустого файла список подзадач пустой");
         assertFalse(historyFromFile.isEmpty(),
                 "История восстановленного менеджера пустая");
+    }
+
+    @Test
+    void shouldReturnAllListsTasksAndHistoryBeforeToAfterLoadFile() {
+        List<Task> allTasksBefore = new ArrayList<>();
+        allTasksBefore.addAll(manager.getTaskList());
+        allTasksBefore.addAll(manager.getEpicList());
+        allTasksBefore.addAll(manager.getSubTaskList());
+
+        FileBackedTasksManager fileBacked = FileBackedTasksManager.loadFromFile(DATA_TEST);
+        List<Task> allTasksAfter = new ArrayList<>();
+        allTasksAfter.addAll(fileBacked.getTaskList());
+        allTasksAfter.addAll(fileBacked.getEpicList());
+        allTasksAfter.addAll(fileBacked.getSubTaskList());
+        assertEquals(allTasksBefore, allTasksAfter, "Списки задач до и после выгрузки не совпадают");
     }
 }

@@ -11,10 +11,6 @@ public class Epic extends Task {
         super(name, description);
     }
 
-    public Epic(String name, String description, long duration, LocalDateTime startTime, Status status) {
-        super(name, description, status, duration, startTime);
-    }
-
     public Epic(int id, String name, String description, long duration, LocalDateTime startTime, Status status) {
         super(id, name, description, duration, startTime, status);
     }
@@ -38,7 +34,7 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return subtaskList.equals(epic.subtaskList);
+        return Objects.equals(subtaskList, epic.subtaskList);
     }
 
     @Override

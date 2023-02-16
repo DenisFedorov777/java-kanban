@@ -8,8 +8,6 @@ import main.tasks.Task;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String HEAD = "id,type,name,description,duration,startTime,status,epicId";
@@ -76,13 +74,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         switch (task.getType()) {
             case EPIC:
                 epics.put(id, (Epic) task);
-                listOfPriority.add(task);
                 break;
             case SUBTASK:
                 SubTask subTask = (SubTask) task;
                 subTasks.put(id, subTask);
                 epics.get(subTask.getEpicId()).getSubtaskList().add(id);
                 listOfPriority.add(subTask);
+                setEpicTime(subTask.getEpicId());
                 break;
             default:
                 tasks.put(id, task);

@@ -84,10 +84,10 @@ public class InMemoryTaskManager implements TaskManager {
         subTask.setStatus(NEW);
         Epic epic = epics.get(epicId);
         if (epic != null) {
-            changeStatus(epicId);
-            setEpicTime(epicId);
             epic.getSubtaskList().add(subTask.getId());
             subTasks.put(subTask.getId(), subTask);
+            changeStatus(epicId);
+            setEpicTime(epicId);
         } else {
             System.out.println("Эпик с таким id не найден");
         }
@@ -112,7 +112,6 @@ public class InMemoryTaskManager implements TaskManager {
                 subTasks.remove(subId);
                 historyManager.remove(subId);
             }
-            listOfPriority.remove(epics.get(id));
             epics.remove(id);
             historyManager.remove(id);
         } else {
@@ -162,7 +161,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void clearEpics() {
         for(int id: epics.keySet()) {
-            listOfPriority.remove(epics.get(id));
             for(int subId: epics.get(id).getSubtaskList()) {
                 historyManager.remove(subId);
                 listOfPriority.remove(subTasks.get(subId));
@@ -274,7 +272,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void setEpicTime(Integer id) throws NullPointerException {
+    protected void setEpicTime(Integer id) throws NullPointerException {
         Epic epic = epics.get(id);
         List<Integer> subtasksIds = epic.getSubtaskList();
         LocalDateTime startTime = null;
