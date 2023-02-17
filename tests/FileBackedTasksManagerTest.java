@@ -95,6 +95,8 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void shouldReturnAllListsTasksAndHistoryBeforeToAfterLoadFile() {
+        manager.getTask(task.getId());
+        manager.getSubtask(subtask1.getId());
         List<Task> allTasksBefore = new ArrayList<>();
         allTasksBefore.addAll(manager.getTaskList());
         allTasksBefore.addAll(manager.getEpicList());
@@ -106,5 +108,8 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         allTasksAfter.addAll(fileBacked.getEpicList());
         allTasksAfter.addAll(fileBacked.getSubTaskList());
         assertEquals(allTasksBefore, allTasksAfter, "Списки задач до и после выгрузки не совпадают");
+        assertEquals(manager.getHistory(), fileBacked.getHistory(), "История до и после выгрузки не совпадают");
+        assertEquals(manager.getListOfPriority(), fileBacked.getListOfPriority(),
+                "Приоритизированный список задач до и после выгрузки не совпадают");
     }
 }
