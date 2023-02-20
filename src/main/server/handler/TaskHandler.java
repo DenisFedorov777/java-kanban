@@ -33,9 +33,18 @@ public class TaskHandler implements HttpHandler {
         String method = exchange.getRequestMethod();
         switch (method) {
             case "GET": {
-                handleGet(exchange);
+                if (!"GET".equals(method)) {
+                    throw new RuntimeException();
+                }
+                if(exchange.getRequestURI().toString().contains("?id=")) {
+
+                    handleTaskGet(exchange);
+                }
             }
             case "POST": {
+
+            }
+            case "PUT": {
 
             }
             case "DELETE": {
@@ -46,8 +55,18 @@ public class TaskHandler implements HttpHandler {
         }
     }
 
-    private void handleGet(HttpExchange exchange) throws IOException {
+    private void handleTaskGetAll(HttpExchange exchange) throws IOException {
         List<Task> taski = manager.getTaskList();
+        String taskJson = gson.toJson(taski);
+        exchange.sendResponseHeaders(200, 0);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(taskJson.getBytes());
+        }
+    }
+
+    private void handleTaskPOST (HttpExchange exchange) throws IOException {
+        List<Task> taski = manager.getTaskList();
+        String task = gson.toJson(taski.get(id));
         String taskJson = gson.toJson(taski);
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {

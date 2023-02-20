@@ -1,85 +1,153 @@
 package main.manager;
 
-import com.google.gson.*;
-import main.server.KVTaskClient;
 import main.tasks.Epic;
 import main.tasks.SubTask;
 import main.tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.stream.Collectors;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class HttpTaskManager extends FileBackedTasksManager {
+    private final HttpClient kvServerClient = HttpClient.newHttpClient();
+    private final String API_TOKEN;
 
-    final static String KEY_TASKS = "tasks";
-    final static String KEY_SUBTASKS = "subtasks";
-    final static String KEY_EPICS = "epics";
-    final static String KEY_HISTORY = "history";
-    final KVTaskClient client;
-    private static final Gson gson =
-            new GsonBuilder().registerTypeAdapter(Instant.class, new LocalDateTimeTypeAdapter()).create();
+    public HttpTaskManager() throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8078/register");
 
-    public HTTPTaskManager(HistoryManager historyManager, String path) throws IOException, InterruptedException {
-        super(historyManager);
-        client = new KVTaskClient(path);
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .header("Content-type", "applicatoin/json")
+                .uri(uri)
+                .build();
 
-        JsonElement jsonTasks = JsonParser.parseString(client.load(KEY_TASKS));
-        if (!jsonTasks.isJsonNull()) {
-            JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
-            for (JsonElement jsonTask : jsonTasksArray) {
-                Task task = gson.fromJson(jsonTask, Task.class);
-                this.addTask(task);
-            }
-        }
-
-        JsonElement jsonEpics = JsonParser.parseString(client.load(KEY_EPICS));
-        if (!jsonEpics.isJsonNull()) {
-            JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
-            for (JsonElement jsonEpic : jsonEpicsArray) {
-                Epic task = gson.fromJson(jsonEpic, Epic.class);
-                this.addEpic(task);
-            }
-        }
-
-        JsonElement jsonSubtasks = JsonParser.parseString(client.load(KEY_SUBTASKS));
-        if (!jsonSubtasks.isJsonNull()) {
-            JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
-            for (JsonElement jsonSubtask : jsonSubtasksArray) {
-                SubTask task = gson.fromJson(jsonSubtask, SubTask.class);
-                this.addSubtask(task);
-            }
-        }
-
-        JsonElement jsonHistoryList = JsonParser.parseString(client.load(KEY_HISTORY));
-        if (!jsonHistoryList.isJsonNull()) {
-            JsonArray jsonHistoryArray = jsonHistoryList.getAsJsonArray();
-            for (JsonElement jsonTaskId : jsonHistoryArray) {
-                int taskId = jsonTaskId.getAsInt();
-                if (this.subTasks.containsKey(taskId)) {
-                    this.getListSub(taskId);
-                } else if (this.epics.containsKey(taskId)) {
-                    this.getEpicById(taskId);
-                } else if (this.tasks.containsKey(taskId)) {
-                    this.getTaskById(taskId);
-                }
-            }
-        }
+        HttpResponse<String> apiToken = kvServerClient.send(request, HttpResponse.BodyHandlers.ofString());
+        API_TOKEN = apiToken.body();
     }
 
-    public HttpTaskManager(File file) {
-        super(file);
+    public void save() {
+        URI taskUri = URI.create("http://localhost:8078/save/tasks?API_TOKEN=" + API_TOKEN);
+        URI epicUri = URI.create("http://localhost:8078/save/epics?API_TOKEN=" + API_TOKEN);
+        URI subtaskUri = URI.create("http://localhost:8078/save/subtasks?API_TOKEN=" + API_TOKEN);
+        URI historyUri = URI.create("http://localhost:8078/save/history?API_TOKEN=" + API_TOKEN);
+    }
+
+    public void loadFromFile() {
+        URI taskUri = URI.create("http://localhost:8078/load/tasks?API_TOKEN=" + API_TOKEN);
+        URI epicUri = URI.create("http://localhost:8078/load/epics?API_TOKEN=" + API_TOKEN);
+        URI subtaskUri = URI.create("http://localhost:8078/load/subtasks?API_TOKEN=" + API_TOKEN);
+        URI historyUri = URI.create("http://localhost:8078/load/history?API_TOKEN=" + API_TOKEN);
+        //делаем запрос к rv-server, получаем от него задачи в формате json, складываем в хэш-мап.
     }
 
     @Override
-    public void save() {
-        client.put(KEY_TASKS, gson.toJson(tasks.values()));
-        client.put(KEY_SUBTASKS, gson.toJson(subtasks.values()));
-        client.put(KEY_EPICS, gson.toJson(epics.values()));
-        client.put(KEY_HISTORY, gson.toJson(this.getHistory()
-                .stream()
-                .map(Task::getId)
-                .collect(Collectors.toList())));
+    public List<Task> getHistory() {
+        return null;
+    }
+
+    @Override
+    public List<Task> getTaskList() {
+        return null;
+    }
+
+    @Override
+    public List<SubTask> getSubTaskList() {
+        return null;
+    }
+
+    @Override
+    public List<Epic> getEpicList() {
+        return null;
+    }
+
+    @Override
+    public void createTask(Task task) {
+
+    }
+
+    @Override
+    public void createEpic(Epic epic) {
+
+    }
+
+    @Override
+    public void createSubTask(SubTask subTask) {
+
+    }
+
+    @Override
+    public void removeTask(int id) {
+
+    }
+
+    @Override
+    public void removeEpic(int id) {
+
+    }
+
+    @Override
+    public void removeSubTask(int id) {
+
+    }
+
+    @Override
+    public void clearTask() {
+
+    }
+
+    @Override
+    public void clearSubtasks() {
+
+    }
+
+    @Override
+    public void clearEpics() {
+
+    }
+
+    @Override
+    public Task getTask(int id) {
+        return null;
+    }
+
+    @Override
+    public Epic getEpic(int id) {
+        return null;
+    }
+
+    @Override
+    public SubTask getSubtask(int id) {
+        return null;
+    }
+
+    @Override
+    public void updateTask(Task task) {
+
+    }
+
+    @Override
+    public void updateSubTask(SubTask subTask) {
+
+    }
+
+    @Override
+    public void updateEpic(Epic epic) {
+
+    }
+
+    @Override
+    public ArrayList<Task> getListSub(int id) {
+        return null;
+    }
+
+    @Override
+    public Set<Task> getListOfPriority() {
+        return null;
     }
 }
