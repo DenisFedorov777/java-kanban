@@ -1,153 +1,70 @@
 package main.manager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import main.server.KVClient;
+import main.service.LocalDateTimeTypeAdapter;
 import main.tasks.Epic;
 import main.tasks.SubTask;
 import main.tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private final HttpClient kvServerClient = HttpClient.newHttpClient();
-    private final String API_TOKEN;
 
-    public HttpTaskManager() throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8078/register");
+    KVClient kvClient;
+    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .header("Content-type", "applicatoin/json")
-                .uri(uri)
-                .build();
+    public HttpTaskManager(String str) throws IOException, InterruptedException {
+        super(null);
+        KVClient kvClient = new KVClient(str);
+    }
 
-        HttpResponse<String> apiToken = kvServerClient.send(request, HttpResponse.BodyHandlers.ofString());
-        API_TOKEN = apiToken.body();
+    public void load() throws IOException, InterruptedException {
+        String taskJson = kvClient.get("task/");
+        String epicJson = kvClient.get("epic/");
+        String subtaskJson = kvClient.get("subtask/");
+        String historyJson = kvClient.get("history/");
+
+        Type typeTask = new TypeToken<Set<Task>>() {}.getType();
+        Set<Task> tasks = gson.fromJson(taskJson, typeTask);
+        Type typeEpic = new TypeToken<Set<Epic>>() {}.getType();
+        Set<Epic> epics = gson.fromJson(epicJson, typeEpic);
+        Type typeSubtask = new TypeToken<Set<SubTask>>() {}.getType();
+        Set<SubTask> subtasks = gson.fromJson(subtaskJson, typeSubtask);
+        Set<Task> history = gson.fromJson(historyJson, typeTask);
+
+        if(tasks != null) {
+            for(Task task: tasks) {
+                this.tasks.put(task.getId(), task);
+                listOfPriority.add(task);
+            }
+        }
+        if(epics != null) {
+            for(Epic epic: epics) {
+                this.epics.put(epic.getId(), epic);
+                listOfPriority.add(epic);
+            }
+        }
+        if(subtasks != null) {
+            for(SubTask subtask: subtasks) {
+                this.subTasks.put(subtask.getId(), subtask);
+                listOfPriority.add(subtask);
+            }
+        }
+        if(history != null) {
+            for(Task task: history) {
+                this.getHistory().add(task);
+                listOfPriority.add(task);
+            }
+        }
     }
 
     public void save() {
-        URI taskUri = URI.create("http://localhost:8078/save/tasks?API_TOKEN=" + API_TOKEN);
-        URI epicUri = URI.create("http://localhost:8078/save/epics?API_TOKEN=" + API_TOKEN);
-        URI subtaskUri = URI.create("http://localhost:8078/save/subtasks?API_TOKEN=" + API_TOKEN);
-        URI historyUri = URI.create("http://localhost:8078/save/history?API_TOKEN=" + API_TOKEN);
-    }
-
-    public void loadFromFile() {
-        URI taskUri = URI.create("http://localhost:8078/load/tasks?API_TOKEN=" + API_TOKEN);
-        URI epicUri = URI.create("http://localhost:8078/load/epics?API_TOKEN=" + API_TOKEN);
-        URI subtaskUri = URI.create("http://localhost:8078/load/subtasks?API_TOKEN=" + API_TOKEN);
-        URI historyUri = URI.create("http://localhost:8078/load/history?API_TOKEN=" + API_TOKEN);
-        //делаем запрос к rv-server, получаем от него задачи в формате json, складываем в хэш-мап.
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return null;
-    }
-
-    @Override
-    public List<Task> getTaskList() {
-        return null;
-    }
-
-    @Override
-    public List<SubTask> getSubTaskList() {
-        return null;
-    }
-
-    @Override
-    public List<Epic> getEpicList() {
-        return null;
-    }
-
-    @Override
-    public void createTask(Task task) {
-
-    }
-
-    @Override
-    public void createEpic(Epic epic) {
-
-    }
-
-    @Override
-    public void createSubTask(SubTask subTask) {
-
-    }
-
-    @Override
-    public void removeTask(int id) {
-
-    }
-
-    @Override
-    public void removeEpic(int id) {
-
-    }
-
-    @Override
-    public void removeSubTask(int id) {
-
-    }
-
-    @Override
-    public void clearTask() {
-
-    }
-
-    @Override
-    public void clearSubtasks() {
-
-    }
-
-    @Override
-    public void clearEpics() {
-
-    }
-
-    @Override
-    public Task getTask(int id) {
-        return null;
-    }
-
-    @Override
-    public Epic getEpic(int id) {
-        return null;
-    }
-
-    @Override
-    public SubTask getSubtask(int id) {
-        return null;
-    }
-
-    @Override
-    public void updateTask(Task task) {
-
-    }
-
-    @Override
-    public void updateSubTask(SubTask subTask) {
-
-    }
-
-    @Override
-    public void updateEpic(Epic epic) {
-
-    }
-
-    @Override
-    public ArrayList<Task> getListSub(int id) {
-        return null;
-    }
-
-    @Override
-    public Set<Task> getListOfPriority() {
-        return null;
     }
 }

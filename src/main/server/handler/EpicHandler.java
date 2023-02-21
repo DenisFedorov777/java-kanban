@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import main.manager.TaskManager;
+import main.tasks.Epic;
 import main.tasks.Task;
 
 import java.io.IOException;
@@ -12,12 +13,11 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class TaskHandler implements HttpHandler {
-
+public class EpicHandler implements HttpHandler {
     TaskManager manager;
     Gson gson;
 
-    public TaskHandler(TaskManager manager, Gson gson) {
+    public EpicHandler(TaskManager manager, Gson gson) {
         this.manager = manager;
         this.gson = gson;
     }
@@ -29,16 +29,16 @@ public class TaskHandler implements HttpHandler {
 
         switch (method) {
             case "GET": {
-                handleAllTasksGet(exchange);
+                handleAllEpicsGet(exchange);
             }
             case "POST": {
-                handleTaskPOST(exchange);
+                handleEpicPOST(exchange);
             }
             case "DELETE": {
                 if(exchange.getRequestURI().getQuery() == null) {
-                    deleteTasks(exchange);
+                    deleteEpics(exchange);
                 } else {
-                    handleTaskDelete(exchange);
+                    handleEpicDelete(exchange);
                 }
             }
             default:
@@ -46,22 +46,22 @@ public class TaskHandler implements HttpHandler {
         }
     }
 
-    private int getTaskId(HttpExchange exchange) {
+    private int getEpicId(HttpExchange exchange) {
         return Integer.parseInt(exchange.getRequestURI().getQuery().split("=")[1]);
     }
 
-    private void handleAllTasksGet(HttpExchange exchange) throws IOException {
+    private void handleAllEpicsGet(HttpExchange exchange) throws IOException {
         if(exchange.getRequestURI().getQuery() != null) {
-            Task task = manager.getTask(getTaskId(exchange));
-            if(task == null) {
+            Epic epic = manager.getEpic(getEpicId(exchange));
+            if(epic == null) {
                 exchange.sendResponseHeaders(404, 0);
                 try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(("Задачи с таким " + getTaskId(exchange) + " не существует.").getBytes());
+                    os.write(("Задачи с таким " + getEpicId(exchange) + " не существует.").getBytes());
                 }
                 exchange.close();
                 return;
             }
-            String taskJson = gson.toJson(task);
+            String taskJson = gson.toJson(epic);
             exchange.sendResponseHeaders(200, 0);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(taskJson.getBytes());
@@ -69,8 +69,8 @@ public class TaskHandler implements HttpHandler {
             exchange.close();
             return;
         }
-        List<Task> taskList = manager.getTaskList();
-        String taskJson = gson.toJson(taskList);
+        List<Epic> epicList = manager.getEpicList();
+        String taskJson = gson.toJson(epicList);
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(taskJson.getBytes());
@@ -78,55 +78,56 @@ public class TaskHandler implements HttpHandler {
         exchange.close();
     }
 
-    private void handleTaskPOST(HttpExchange exchange) throws IOException {
+    private void handleEpicPOST(HttpExchange exchange) throws IOException {
         InputStream inputStream = exchange.getRequestBody();
         String path = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        Task t = gson.fromJson(path, Task.class);
+        Epic epic = gson.fromJson(path, Epic.class);
         if(exchange.getRequestURI().getQuery() != null) {
-            for (Task taska : manager.getTaskList()) {
-                if (taska.getId() == getTaskId(exchange)) {
-                    manager.updateTask(t);
+            for (Epic epic1 : manager.getEpicList()) {
+                if (epic1.getId() == getEpicId(exchange)) {
+                    manager.updateEpic(epic1);
                     exchange.sendResponseHeaders(200, 0);
                     try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(("Задача  обновлена " + getTaskId(exchange)).getBytes());
+                        os.write(("Задача  обновлена " + getEpicId(exchange)).getBytes());
                     }
                     exchange.close();
                     return;
                 }
             }
         }
-        manager.createTask(t);
+        manager.createEpic(epic);
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write("Задача успешно создана ".getBytes());
+            os.write("Эпик успешно создана ".getBytes());
         }
         exchange.close();
     }
 
-    public void deleteTasks(HttpExchange exchange) throws IOException {
-        manager.clearTask();
+    public void deleteEpics(HttpExchange exchange) throws IOException {
+        manager.clearEpics();
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write(("Список задач очищен ".getBytes()));
+            os.write(("Список эпиков очищен ".getBytes()));
         }
         exchange.close();
     }
 
-    private void handleTaskDelete(HttpExchange exchange) throws IOException {
-        for(Task taska: manager.getTaskList()) {
-            if(taska.getId() == getTaskId(exchange)) {
-                manager.removeTask(getTaskId(exchange));
+    private void handleEpicDelete(HttpExchange exchange) throws IOException {
+        for(Epic epic: manager.getEpicList()) {
+            if(epic.getId() == getEpicId(exchange)) {
+                manager.removeEpic(getEpicId(exchange));
                 exchange.sendResponseHeaders(200, 0);
                 try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(("Задача удалена " + getTaskId(exchange)).getBytes());
+                    os.write(("Эпик удален " + getEpicId(exchange)).getBytes());
                 }
                 exchange.close();
                 return;
             }
         }
+
         exchange.sendResponseHeaders(404, 0);
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write(("Задача не найдена " + getTaskId(exchange)).getBytes());
+            os.write(("Эпик не найден " + getEpicId(exchange)).getBytes());
         }
         exchange.close();
     }

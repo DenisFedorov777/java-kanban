@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import main.manager.TaskManager;
-import main.tasks.Task;
+import main.tasks.SubTask;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,12 +12,11 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class TaskHandler implements HttpHandler {
-
+public class SubtaskHandler implements HttpHandler {
     TaskManager manager;
     Gson gson;
 
-    public TaskHandler(TaskManager manager, Gson gson) {
+    public SubtaskHandler(TaskManager manager, Gson gson) {
         this.manager = manager;
         this.gson = gson;
     }
@@ -29,16 +28,16 @@ public class TaskHandler implements HttpHandler {
 
         switch (method) {
             case "GET": {
-                handleAllTasksGet(exchange);
+                handleAllSubtasksGet(exchange);
             }
             case "POST": {
                 handleTaskPOST(exchange);
             }
             case "DELETE": {
                 if(exchange.getRequestURI().getQuery() == null) {
-                    deleteTasks(exchange);
+                    deleteSubtasks(exchange);
                 } else {
-                    handleTaskDelete(exchange);
+                    handleSubtaskDelete(exchange);
                 }
             }
             default:
@@ -46,17 +45,17 @@ public class TaskHandler implements HttpHandler {
         }
     }
 
-    private int getTaskId(HttpExchange exchange) {
+    private int getSubtaskId(HttpExchange exchange) {
         return Integer.parseInt(exchange.getRequestURI().getQuery().split("=")[1]);
     }
 
-    private void handleAllTasksGet(HttpExchange exchange) throws IOException {
+    private void handleAllSubtasksGet(HttpExchange exchange) throws IOException {
         if(exchange.getRequestURI().getQuery() != null) {
-            Task task = manager.getTask(getTaskId(exchange));
+            SubTask task = manager.getSubtask(getSubtaskId(exchange));
             if(task == null) {
                 exchange.sendResponseHeaders(404, 0);
                 try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(("Задачи с таким " + getTaskId(exchange) + " не существует.").getBytes());
+                    os.write(("Задачи с таким " + getSubtaskId(exchange) + " не существует.").getBytes());
                 }
                 exchange.close();
                 return;
@@ -69,8 +68,8 @@ public class TaskHandler implements HttpHandler {
             exchange.close();
             return;
         }
-        List<Task> taskList = manager.getTaskList();
-        String taskJson = gson.toJson(taskList);
+        List<SubTask> subtaskList = manager.getSubTaskList();
+        String taskJson = gson.toJson(subtaskList);
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(taskJson.getBytes());
@@ -81,21 +80,21 @@ public class TaskHandler implements HttpHandler {
     private void handleTaskPOST(HttpExchange exchange) throws IOException {
         InputStream inputStream = exchange.getRequestBody();
         String path = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        Task t = gson.fromJson(path, Task.class);
+        SubTask subtask = gson.fromJson(path, SubTask.class);
         if(exchange.getRequestURI().getQuery() != null) {
-            for (Task taska : manager.getTaskList()) {
-                if (taska.getId() == getTaskId(exchange)) {
-                    manager.updateTask(t);
+            for (SubTask sub : manager.getSubTaskList()) {
+                if (sub.getId() == getSubtaskId(exchange)) {
+                    manager.updateSubTask(sub);
                     exchange.sendResponseHeaders(200, 0);
                     try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(("Задача  обновлена " + getTaskId(exchange)).getBytes());
+                        os.write(("Задача  обновлена " + getSubtaskId(exchange)).getBytes());
                     }
                     exchange.close();
                     return;
                 }
             }
         }
-        manager.createTask(t);
+        manager.createSubTask(subtask);
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write("Задача успешно создана ".getBytes());
@@ -103,8 +102,8 @@ public class TaskHandler implements HttpHandler {
         exchange.close();
     }
 
-    public void deleteTasks(HttpExchange exchange) throws IOException {
-        manager.clearTask();
+    public void deleteSubtasks(HttpExchange exchange) throws IOException {
+        manager.clearSubtasks();
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(("Список задач очищен ".getBytes()));
@@ -112,21 +111,22 @@ public class TaskHandler implements HttpHandler {
         exchange.close();
     }
 
-    private void handleTaskDelete(HttpExchange exchange) throws IOException {
-        for(Task taska: manager.getTaskList()) {
-            if(taska.getId() == getTaskId(exchange)) {
-                manager.removeTask(getTaskId(exchange));
+    private void handleSubtaskDelete(HttpExchange exchange) throws IOException {
+        for(SubTask subTask: manager.getSubTaskList()) {
+            if(subTask.getId() == getSubtaskId(exchange)) {
+                manager.removeSubTask(getSubtaskId(exchange));
                 exchange.sendResponseHeaders(200, 0);
                 try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(("Задача удалена " + getTaskId(exchange)).getBytes());
+                    os.write(("Задача удалена " + getSubtaskId(exchange)).getBytes());
                 }
                 exchange.close();
                 return;
             }
         }
+
         exchange.sendResponseHeaders(404, 0);
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write(("Задача не найдена " + getTaskId(exchange)).getBytes());
+            os.write(("Задача не найдена " + getSubtaskId(exchange)).getBytes());
         }
         exchange.close();
     }

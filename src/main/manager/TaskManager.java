@@ -1,5 +1,4 @@
 package main.manager;
-
 import main.tasks.Epic;
 import main.tasks.SubTask;
 import main.tasks.Task;
@@ -50,4 +49,8 @@ public interface TaskManager {
     ArrayList<Task> getListSub(int id); //получение списка подзадач одного эпика
 
     Set<Task> getListOfPriority();
+
+    List<Task> getAll();
+
+    void setAllTasks();
 }

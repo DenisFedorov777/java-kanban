@@ -2,8 +2,10 @@ package main.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
-import main.manager.Managers;
 import main.manager.TaskManager;
+import main.server.handler.AllTasksHandler;
+import main.server.handler.EpicHandler;
+import main.server.handler.SubtaskHandler;
 import main.server.handler.TaskHandler;
 
 import java.io.IOException;
@@ -22,21 +24,15 @@ public class HttpTaskServer {
         gson = new Gson();
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
-        httpServer.createContext("/tasks/task", new TaskHandler(manager));
-        httpServer.createContext("/tasks/epic/", new EpicHandler(manager));
-        httpServer.createContext("/tasks/subtask/", new SubtaskHandler(manager));
-        httpServer.createContext("/tasks/subtask/epic/", new SubtaskByEpicHandler(manager));
-        httpServer.createContext("/tasks/history/", new HistoryHandler(manager));
-        httpServer.createContext("/tasks/", new AllTasksHandler(manager));
-    }
-
-    public void start() {
+        httpServer.createContext("/tasks/task", new TaskHandler(manager, gson));
+        httpServer.createContext("/tasks/epic", new EpicHandler(manager, gson));
+        httpServer.createContext("/tasks/subtask", new SubtaskHandler(manager, gson));
+        httpServer.createContext("/tasks/", new AllTasksHandler(manager, gson));
         httpServer.start();
         System.out.println("Сервер запущен на порту" + PORT);
     }
 
     public void stop() {
-        httpServer.stop(1);
-        System.out.println("Сервер остановлен");
+        httpServer.stop(0);
     }
 }

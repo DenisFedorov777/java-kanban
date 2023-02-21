@@ -17,6 +17,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
+    private List<Task> AllTasks = new ArrayList<>();
+
     protected final Set<Task> listOfPriority = new TreeSet<>((task1, task2) -> {
         if ((task1.getStartTime() != null) && (task2.getStartTime() != null)) {
             return task1.getStartTime().compareTo(task2.getStartTime());
@@ -51,6 +53,22 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    @Override
+    public List<Task> getAll() {
+        AllTasks.addAll(tasks.values());
+        AllTasks.addAll(subTasks.values());
+        AllTasks.addAll(epics.values());
+        return AllTasks;
+    }
+
+    @Override
+    public void setAllTasks() {
+        clearTask();
+        clearSubtasks();
+        clearEpics();
+        AllTasks.clear();
     }
 
     @Override
@@ -296,20 +314,25 @@ public class InMemoryTaskManager implements TaskManager {
     private final Predicate<Task> checkIntersection = newTask -> { //проверка пересечения задач
         LocalDateTime newTaskStart = newTask.getStartTime();
         LocalDateTime newTaskFinish = newTask.getEndTime();
+        if(newTaskStart == null) {
+            return false;
+        }
         for (Task task : listOfPriority) {
             LocalDateTime oldTaskStart = task.getStartTime();
             LocalDateTime oldTaskEnd = task.getEndTime();
-            if (newTaskStart.isBefore(oldTaskStart) && newTaskFinish.isAfter(oldTaskStart)) {
-                return true;
-            }
-            if (newTaskStart.isBefore(oldTaskEnd) && newTaskFinish.isAfter(oldTaskEnd)) {
-                return true;
-            }
-            if (newTaskStart.isEqual(oldTaskStart) && newTaskFinish.isBefore(oldTaskEnd)) {
-                return true;
-            }
-            if (newTaskStart.isEqual(oldTaskStart) && newTaskFinish.isEqual(oldTaskEnd)) {
-                return true;
+            if(oldTaskStart != null) {
+                if (newTaskStart.isBefore(oldTaskStart) && newTaskFinish.isAfter(oldTaskStart)) {
+                    return true;
+                }
+                if (newTaskStart.isBefore(oldTaskEnd) && newTaskFinish.isAfter(oldTaskEnd)) {
+                    return true;
+                }
+                if (newTaskStart.isEqual(oldTaskStart) && newTaskFinish.isBefore(oldTaskEnd)) {
+                    return true;
+                }
+                if (newTaskStart.isEqual(oldTaskStart) && newTaskFinish.isEqual(oldTaskEnd)) {
+                    return true;
+                }
             }
         }
         return false;
