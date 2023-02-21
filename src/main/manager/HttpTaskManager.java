@@ -22,7 +22,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public HttpTaskManager(String str) throws IOException, InterruptedException {
         super(null);
-        KVClient kvClient = new KVClient(str);
+        kvClient = new KVClient(str);
+    }
+
+    public HttpTaskManager(File file) {
+        super(file);
     }
 
     public void load() throws IOException, InterruptedException {
@@ -31,40 +35,54 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String subtaskJson = kvClient.get("subtask/");
         String historyJson = kvClient.get("history/");
 
-        Type typeTask = new TypeToken<Set<Task>>() {}.getType();
+        Type typeTask = new TypeToken<Set<Task>>() {
+        }.getType();
         Set<Task> tasks = gson.fromJson(taskJson, typeTask);
-        Type typeEpic = new TypeToken<Set<Epic>>() {}.getType();
+        Type typeEpic = new TypeToken<Set<Epic>>() {
+        }.getType();
         Set<Epic> epics = gson.fromJson(epicJson, typeEpic);
-        Type typeSubtask = new TypeToken<Set<SubTask>>() {}.getType();
+        Type typeSubtask = new TypeToken<Set<SubTask>>() {
+        }.getType();
         Set<SubTask> subtasks = gson.fromJson(subtaskJson, typeSubtask);
         Set<Task> history = gson.fromJson(historyJson, typeTask);
 
-        if(tasks != null) {
-            for(Task task: tasks) {
+        if (tasks != null) {
+            for (Task task : tasks) {
                 this.tasks.put(task.getId(), task);
                 listOfPriority.add(task);
             }
         }
-        if(epics != null) {
-            for(Epic epic: epics) {
+        if (epics != null) {
+            for (Epic epic : epics) {
                 this.epics.put(epic.getId(), epic);
-                listOfPriority.add(epic);
             }
         }
-        if(subtasks != null) {
-            for(SubTask subtask: subtasks) {
+        if (subtasks != null) {
+            for (SubTask subtask : subtasks) {
                 this.subTasks.put(subtask.getId(), subtask);
                 listOfPriority.add(subtask);
             }
         }
-        if(history != null) {
-            for(Task task: history) {
+        if (history != null) {
+            for (Task task : history) {
                 this.getHistory().add(task);
-                listOfPriority.add(task);
             }
         }
     }
 
     public void save() {
+        Type typeTask = new TypeToken<Set<Task>>() {}.getType();
+        String taskToJson = gson.toJson(tasks.values(), typeTask);
+        String epicToJson = gson.toJson(epics.values(), typeTask);
+        String subtaskToJson = gson.toJson(subTasks.values(), typeTask);
+        String historyToJson = gson.toJson(getHistory());
+        try {
+            kvClient.put("task/", taskToJson);
+            kvClient.put("epic/", epicToJson);
+            kvClient.put("subtask/", subtaskToJson);
+            kvClient.put("history/", historyToJson);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,15 +1,20 @@
 package main.server.handler;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import main.manager.TaskManager;
+import main.tasks.Epic;
+import main.tasks.Status;
 import main.tasks.SubTask;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SubtaskHandler implements HttpHandler {
@@ -123,11 +128,51 @@ public class SubtaskHandler implements HttpHandler {
                 return;
             }
         }
-
         exchange.sendResponseHeaders(404, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(("Задача не найдена " + getSubtaskId(exchange)).getBytes());
         }
         exchange.close();
+    }
+    public static class SubtaskSerializer implements JsonSerializer<SubTask> {
+
+        @Override
+        public JsonElement serialize(SubTask subtask, Type type, JsonSerializationContext jsonSerializationContext) {
+            JsonObject result = new JsonObject();
+            result.addProperty("status", subtask.getStatus().toString());
+            result.addProperty("id", subtask.getId());
+            result.addProperty("name", subtask.getName());
+            result.addProperty("description", subtask.getDescription());
+            result.add("startTime", jsonSerializationContext.serialize(subtask.getStartTime()));
+            result.addProperty("duration", subtask.getDuration());
+            result.addProperty("epicId", subtask.getEpicId());
+            return result;
+        }
+    }
+    public class SubtaskDeserializer implements JsonDeserializer<SubTask> {
+
+        @Override
+        public SubTask deserialize(JsonElement jsonElement, Type type,
+                                   JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            String name = jsonObject.get("name").getAsString();
+            String description = jsonObject.get("description").getAsString();
+            long duration = jsonObject.get("duration").getAsLong();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd--MM--yyyy, HH:mm");
+            LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString(), formatter);
+            int epicId = jsonObject.get("epicId").getAsInt();
+            SubTask subtask = new SubTask(name, description, duration, startTime, epicId);
+            if(jsonObject.has("id"))
+                subtask.setId(jsonObject.get("id").getAsInt());
+            if(jsonObject.has("duration"))
+                subtask.setDuration(jsonObject.get("duration").getAsLong());
+            if(jsonObject.has("startTime")) {
+                subtask.setStartTime(jsonDeserializationContext
+                        .deserialize(jsonObject.get("startTime"), LocalDateTime.class));
+            }
+            if(jsonObject.has("status"))
+                subtask.setStatus(Status.valueOf(jsonObject.get("status").toString()));
+            return subtask;
+        }
     }
 }

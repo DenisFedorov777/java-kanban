@@ -49,7 +49,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return dataTasks;
     }
 
-    private void save() {
+    public void save() {
         try(FileWriter writer = new FileWriter(file, false)) {
             writer.write(HEAD + NEW_LINE);
             for (Task task : getTaskList()) {
@@ -64,7 +64,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             writer.write(NEW_LINE);
             writer.write(Formatter.historyToString(historyManager));
-            } catch (IOException e) {
+        } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при сохранении файла", e);
         }
     }
