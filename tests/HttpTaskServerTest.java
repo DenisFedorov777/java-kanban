@@ -1,7 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import main.manager.HttpTaskManager;
-import main.manager.TaskManager;
 import main.server.HttpTaskServer;
 import main.server.KVServer;
 import main.service.LocalDateTimeTypeAdapter;
@@ -46,7 +45,7 @@ class HttpTaskServerTest {
 
     @Test
     public void shouldReturnTaskToPOST() throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8080/tasks/task");
+        URI uri = URI.create("http://localhost:8080/tasks/task?id=1");
         Task task = new Task("одеться", "надеть рубашку", Status.IN_PROGRESS, 1,
                 LocalDateTime.of(2023, Month.FEBRUARY, 4, 10, 10));
         HttpRequest request = HttpRequest.newBuilder()
@@ -72,6 +71,23 @@ class HttpTaskServerTest {
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    public void shouldReturnSubtaskToPOST() throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8080/tasks/subtask?id=2");
+        Epic epic = new Epic("первый эпик", "описание первого эпика");
+        manager.createEpic(epic);
+        SubTask subtask = new SubTask("одеться", "надеть рубашку", epic.getId());
+        manager.createSubTask(subtask);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(subtask)))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals("Задача  обновлена 2", response.body());
         assertEquals(200, response.statusCode());
     }
 
@@ -120,5 +136,52 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
         assertEquals(gson.toJson(epic), response.body());
+    }
+
+    @Test
+    public void shouldReturnEpicToDELETE() throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8080/tasks/epic?id=1");
+        Epic epic = new Epic("одеться", "надеть рубашку");
+        manager.createEpic(epic);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .DELETE()
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+        assertEquals("Эпик удален 1", response.body());
+    }
+
+    @Test
+    public void shouldReturnTaskToDELETE() throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8080/tasks/task?id=1");
+        Task task = new Task("одеться", "надеть рубашку", Status.IN_PROGRESS, 1,
+                LocalDateTime.of(2023, Month.FEBRUARY, 4, 10, 10));
+        manager.createTask(task);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .DELETE()
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    public void shouldReturnSubtaskToDELETE() throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8080/tasks/subtask?id=2");
+        Epic epic = new Epic("первый эпик", "описание первого эпика");
+        manager.createEpic(epic);
+        SubTask subtask = new SubTask("одеться", "надеть рубашку", epic.getId());
+        manager.createSubTask(subtask);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .DELETE()
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals("Задача удалена 2", response.body());
+        assertEquals(200, response.statusCode());
     }
 }

@@ -5,13 +5,11 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import main.manager.TaskManager;
 import main.tasks.Status;
-import main.tasks.SubTask;
 import main.tasks.Task;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -140,45 +138,5 @@ public class TaskHandler implements HttpHandler {
             os.write(("Задача не найдена " + getTaskId(exchange)).getBytes());
         }
         exchange.close();
-    }
-
-    public static class TaskSerializer implements JsonSerializer<Task> {
-
-        @Override
-        public JsonElement serialize(Task task, Type type, JsonSerializationContext jsonSerializationContext) {
-            JsonObject result = new JsonObject();
-            result.addProperty("id", task.getId());
-            result.addProperty("name", task.getName());
-            result.addProperty("description", task.getDescription());
-            result.addProperty("duration", task.getDuration());
-            result.add("startTime", jsonSerializationContext.serialize(task.getStartTime()));
-            result.addProperty("status", task.getStatus().toString());
-            return result;
-        }
-    }
-    public class TaskDeserializer implements JsonDeserializer<Task> {
-
-        @Override
-        public Task deserialize(JsonElement jsonElement, Type type,
-                                JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            String name = jsonObject.get("name").getAsString();
-            String description = jsonObject.get("description").getAsString();
-            long duration = jsonObject.get("duration").getAsLong();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd--MM--yyyy, HH:mm");
-            LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString(), formatter);
-            Task task = new Task(name, description, duration, startTime);
-            if(jsonObject.has("id"))
-                task.setId(jsonObject.get("id").getAsInt());
-            if(jsonObject.has("duration"))
-                task.setDuration(jsonObject.get("duration").getAsLong());
-            if(jsonObject.has("startTime")) {
-                task.setStartTime(jsonDeserializationContext
-                        .deserialize(jsonObject.get("startTime"), LocalDateTime.class));
-            }
-            if(jsonObject.has("status"))
-                task.setStatus(Status.valueOf(jsonObject.get("status").toString()));
-            return task;
-        }
     }
 }

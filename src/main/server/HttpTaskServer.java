@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 import main.manager.TaskManager;
-import main.server.handler.AllTasksHandler;
-import main.server.handler.EpicHandler;
-import main.server.handler.SubtaskHandler;
-import main.server.handler.TaskHandler;
+import main.server.handler.*;
 import main.service.LocalDateTimeTypeAdapter;
 
 import java.io.IOException;
@@ -24,7 +21,7 @@ public class HttpTaskServer {
 
     private final HttpServer httpServer;
 
-    private TaskManager manager;
+    private final TaskManager manager;
 
     public HttpTaskServer(TaskManager manager) throws IOException {
         this.manager = manager;
@@ -34,6 +31,7 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/epic", new EpicHandler(manager, gson));
         httpServer.createContext("/tasks/subtask", new SubtaskHandler(manager, gson));
         httpServer.createContext("/tasks/", new AllTasksHandler(manager, gson));
+        httpServer.createContext("/tasks/history", new HistoryHandler(manager, gson));
         httpServer.start();
         System.out.println("Сервер запущен на порту" + PORT);
     }

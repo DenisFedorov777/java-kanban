@@ -89,7 +89,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void addToHistory(int id) {
+    protected void addToHistory(int id) {
         if (epics.containsKey(id)) {
             historyManager.add(epics.get(id));
         } else if (subTasks.containsKey(id)) {

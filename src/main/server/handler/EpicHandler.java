@@ -138,6 +138,7 @@ public class EpicHandler implements HttpHandler {
                 return;
             }
         }
+
         exchange.sendResponseHeaders(404, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(("Эпик не найден " + getEpicId(exchange)).getBytes());

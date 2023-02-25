@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import main.manager.TaskManager;
-import main.tasks.Epic;
 import main.tasks.Task;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Set;
 
 public class AllTasksHandler implements HttpHandler {
     TaskManager manager;
@@ -29,28 +29,20 @@ public class AllTasksHandler implements HttpHandler {
             case "GET": {
                 handleAllGet(exchange);
             }
-            case "DELETE": {
-                handleEpicDELETE(exchange);
-            }
             default:
-
+                exchange.sendResponseHeaders(405, 0);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write("Неверный запрос ".getBytes());
+                }
         }
     }
 
     private void handleAllGet(HttpExchange exchange) throws IOException {
-        List<Task> AllTasks = manager.getAll();
+        Set<Task> AllTasks = manager.getListOfPriority();
         String taskJson = gson.toJson(AllTasks);
         exchange.sendResponseHeaders(200, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(taskJson.getBytes());
-        }
-    }
-
-    private void handleEpicDELETE(HttpExchange exchange) throws IOException {
-        manager.setAllTasks();
-        exchange.sendResponseHeaders(200, 0);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write("Все задачи удалены успешно".getBytes());
         }
     }
 }

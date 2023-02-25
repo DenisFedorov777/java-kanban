@@ -128,6 +128,7 @@ public class SubtaskHandler implements HttpHandler {
                 return;
             }
         }
+
         exchange.sendResponseHeaders(404, 0);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(("Задача не найдена " + getSubtaskId(exchange)).getBytes());
@@ -139,6 +140,7 @@ public class SubtaskHandler implements HttpHandler {
         @Override
         public JsonElement serialize(SubTask subtask, Type type, JsonSerializationContext jsonSerializationContext) {
             JsonObject result = new JsonObject();
+
             result.addProperty("status", subtask.getStatus().toString());
             result.addProperty("id", subtask.getId());
             result.addProperty("name", subtask.getName());

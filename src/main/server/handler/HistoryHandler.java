@@ -12,6 +12,11 @@ import java.util.List;
 
 public class HistoryHandler implements HttpHandler {
 
+    public HistoryHandler(TaskManager manager, Gson gson) {
+        this.manager = manager;
+        this.gson = gson;
+    }
+
     TaskManager manager;
     Gson gson;
 
